@@ -11,9 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 
-import sys
+from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QPlainTextEdit, QLineEdit, QPushButton, QTableView, QSpacerItem, QLabel
 
-from PyQt6.QtWidgets import QApplication, QWidget, QMainWindow, QVBoxLayout, QHBoxLayout, QSizePolicy, QPlainTextEdit, QLineEdit, QPushButton, QTableView, QSpacerItem, QLabel
+from wisher.src.Steamtest import get_app_details
 
 class Interface(QMainWindow):
 	def __init__(self):
@@ -27,7 +27,7 @@ class Interface(QMainWindow):
 		self.main_layout = QVBoxLayout()
 
 		self.game_data_test = QPlainTextEdit()
-		self.game_data_test.appendPlainText("Test")
+		self.game_data_test.appendPlainText(get_app_details(648800)[str(648800)]['data']['name'])
 		self.main_layout.addWidget(self.game_data_test)
 
 		##############################
@@ -39,9 +39,3 @@ class Interface(QMainWindow):
 		self.central_widget.setLayout(self.main_layout)
 		self.setCentralWidget(self.central_widget)
 		self.setWindowTitle("SeaWisher")
-
-if __name__ == '__main__':
-	app = QApplication(sys.argv)
-	ui = Interface()
-	ui.show()
-	sys.exit(app.exec())

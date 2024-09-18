@@ -19,7 +19,7 @@ def get_app_details(id3):
     try:
         response = requests.get(url)
         response.raise_for_status()  # Проверка на HTTP ошибки
-        print(f"Response content: {json.dumps(response.json(), indent=4)}")  # Для отладки
+        # print(f"Response content: {json.dumps(response.json(), indent=4)}")  # Для отладки
         return response.json()
     except requests.exceptions.RequestException as e:
         print(f"HTTP Request failed: {e}")
