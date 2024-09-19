@@ -15,7 +15,7 @@ import sys
 
 from PyQt6.QtWidgets import QApplication
 
-from ui.Interfase import Interface
+from ui.interfase import Interface
 
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
