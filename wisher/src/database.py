@@ -14,7 +14,7 @@
 # limitations under the License.                                                   #
 # ################################################################################ #
 
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Enum, ForeignKey, desc
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, Enum, Boolean, ForeignKey, desc
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 
 Base = declarative_base()
@@ -27,21 +27,27 @@ class Games(Base):
 	# Стимовская информация
 	# Скачивается автоматически при добавлении игры
 	# ############################################################
-	title = Column(String, nullable=False)  # Название игры
-	game_link = Column(String, nullable=False)  # Ссылка на игру в Стиме
-	image_link = Column(String, nullable=False)  # Ссылка на обложку игры
-	cost = Column(String, nullable=False)  # Стоимость игры
-	reviews = Column(String, nullable=False)  # Рецензии: 275650 отзывов
-	# reviews = Column(Enum('Mostly positive', 'Very happy'), nullable=False)  # Рецензии: Очень положительные
-	release_date = Column(String, nullable=False)  # Дата релиза игры
-	platforms = Column(String, nullable=False)  # Платформы, на которые вышла игра
-	steam_tags = Column(String, nullable=False)  # Жанры игры
+	title = Column(String, nullable=False)  # Название игры (Базовый)
+	game_link = Column(String, nullable=False)  # Ссылка на игру в Стиме (Базовый)
+	image_link = Column(String, nullable=False)  # Ссылка на обложку игры (Базовый)
+	short_description = Column(String, nullable=False)  # Краткое описание
+	website = Column(String, nullable=False)  # Ссылка на сайт игры
+	developers = Column(String, nullable=False)  # Разработчики
+	publishers = Column(String, nullable=False)  # Издатели
+	coming_soon = Column(Boolean, nullable=False)  #
+	release_date = Column(String, nullable=False)  # Дата релиза игры (Базовый)
+	platforms = Column(String, nullable=False)  # Платформы, на которые вышла игра (Базовый)
+	steam_categories = Column(String, nullable=False)  # Стимовские категории
+	steam_tags = Column(String, nullable=False)  # Жанры игры (Базовый)
+	cost = Column(String, nullable=False)  # Стоимость игры (Базовый)
 
 	# ############################################################
 	# Информация со SteamDB
 	# Вводится вручную при добавлении игры
 	# ############################################################
+	category = Column(String, nullable=False)  # Категория (по библиотеке) куда я определяю игру
 	steamDB_game_link = Column(String, nullable=False)  # Ссылка на игру в SteamDB
+	steam_reviews = Column(Enum('Mostly positive', 'Very happy'), nullable=False)  # Рецензии
 	steamDB_rating_stats = Column(String, nullable=False)  # Рейтинг игры по SteamDB
 	positive_reviews_stats = Column(String, nullable=False)  # Количество позитивных отзывов по SteamDB
 	negative_reviews_stats = Column(String, nullable=False)  # Количество негативных отзывов по SteamDB
@@ -62,13 +68,12 @@ class Games(Base):
 
 	# ############################################################
 	# Информация о покупке - чек
-	# Вводится вручную после покупке игры
+	# Вводится вручную после покупки игры
 	# ############################################################
 	purchase_date = Column(String)  # Дата покупки
 	purchase_time = Column(String)  # Время покупки
 	total_discount = Column(String)  # Скидка на момент покупки
 	total_price = Column(String)  # Сколько я заплатил
-	category = Column(String)  # Категория в библиотеке
 
 	# ############################################################
 	# Впечатления об игре

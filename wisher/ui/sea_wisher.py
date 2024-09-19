@@ -1,24 +1,27 @@
-# Copyright © 2024 Kalynovsky Valentin. All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
+# ################################################################################ #
+# Copyright © 2024 Kalynovsky Valentin. All rights reserved.                       #
+#                                                                                  #
+# Licensed under the Apache License, Version 2.0 (the "License");                  #
+# you may not use this file except in compliance with the License.                 #
+# You may obtain a copy of the License at                                          #
+#                                                                                  #
+#     http://www.apache.org/licenses/LICENSE-2.0                                   #
+#                                                                                  #
+# Unless required by applicable law or agreed to in writing, software              #
+# distributed under the License is distributed on an "AS IS" BASIS,                #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.         #
+# See the License for the specific language governing permissions and              #
+# limitations under the License.                                                   #
+# ################################################################################ #
 
 from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QPlainTextEdit, QLineEdit, QPushButton, QTableView, QSpacerItem, QLabel
 
-from wisher.src.steamtest import get_app_details
+from wisher.src.steam_api import get_game_details
 from wisher.src.database import Database
 
-class Interface(QMainWindow):
+class SeaWisher(QMainWindow):
 	def __init__(self):
-		super(Interface, self).__init__()
+		super(SeaWisher, self).__init__()
 
 		##############################
 		#
@@ -46,10 +49,13 @@ class Interface(QMainWindow):
 		self.setWindowTitle("SeaWisher")
 
 	def main_layout_clicked(self):
-		game_details = get_app_details(648800)
+		id = 648800  # ID игры Raft
 
-		if game_details and str(648800) in game_details and game_details[str(648800)]['success']:
-			game_data = game_details[str(648800)]['data']
+		game_details = get_game_details(id)
+
+		# if game_details and str(648800) in game_details and game_details[str(648800)]['success']:
+		if game_details[str(id)]['success']:
+			game_data = game_details[str(id)]['data']
 
 			# Имя игры
 			title = game_data['name']
@@ -58,20 +64,25 @@ class Interface(QMainWindow):
 			# 		return jsonify({'success': False, 'error_message': 'Пост із такою назвою вже існує'})
 
 			# Ссылка на страницу игры
-			game_link = f"https://store.steampowered.com/app/{648800}/"
+			game_link = f"https://store.steampowered.com/app/{id}/"
 
 			# Ссылка на заставку
 			image_link = game_data['header_image']
 
-			# Стоимость игры
-			cost_info = game_data.get('price_overview', None)
-			if cost_info:
-				cost = cost_info['final_formatted']  # Цена в локальной валюте
-			else:
-				cost = "Игра недоступна для покупки"
+			# Краткое описание
+			short_description = game_data['short_description']
 
-			# Рецензии на игру
-			reviews = game_data.get('recommendations', {}).get('total', 'Нет данных')
+			# Ссылка на сайт игры
+			website = game_data['website']
+
+			# Разработчики
+			developers = f"{', '.join(game_data['developers'])}"
+
+			# Издатели
+			publishers = f"{', '.join(game_data['publishers'])}"
+
+			#
+			coming_soon = game_data['release_date']['coming_soon']
 
 			# Дата релиза
 			release_date = game_data['release_date']['date']
@@ -86,11 +97,23 @@ class Interface(QMainWindow):
 				list_platforms.append('Linux')
 			platforms = f"{', '.join(list_platforms)}"
 
+			# Стимовские категории
+			steam_categories = f"{', '.join([category['description'] for category in game_data.get('categories', [])])}"
+
 			# Жанры
 			steam_tags = f"{', '.join([genre['description'] for genre in game_data.get('genres', [])])}"
 
+			# Стоимость игры
+			cost_info = game_data.get('price_overview', None)
+			if cost_info:
+				cost = cost_info['final_formatted']  # Цена в локальной валюте
+			else:
+				cost = "Игра недоступна для покупки"
+
 			# Симулирую ввод данных
+			category = "1"
 			steamDB_game_link = "1"
+			steam_reviews = "Mostly positive"
 			steamDB_rating_stats = "1"
 			positive_reviews_stats = "1"
 			negative_reviews_stats = "1"
@@ -109,12 +132,19 @@ class Interface(QMainWindow):
 				'title': title,
 				'game_link': game_link,
 				'image_link': image_link,
-				'cost': cost,
-				'reviews': reviews,
+				"short_description": short_description,
+				"website": website,
+				"developers": developers,
+				"publishers": publishers,
+				"coming_soon": coming_soon,
 				'release_date': release_date,
 				'platforms': platforms,
+				"steam_categories": steam_categories,
 				'steam_tags': steam_tags,
+				'cost': cost,
+				'category': category,
 				'steamDB_game_link': steamDB_game_link,
+				"steam_reviews": steam_reviews,
 				'steamDB_rating_stats': steamDB_rating_stats,
 				'positive_reviews_stats': positive_reviews_stats,
 				'negative_reviews_stats': negative_reviews_stats,

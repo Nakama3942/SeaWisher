@@ -14,14 +14,21 @@
 # limitations under the License.                                                   #
 # ################################################################################ #
 
-import sys
+import requests
+import json
 
-from PyQt6.QtWidgets import QApplication
-
-from ui.sea_wisher import SeaWisher
-
-if __name__ == '__main__':
-	app = QApplication(sys.argv)
-	ui = SeaWisher()
-	ui.show()
-	sys.exit(app.exec())
+def get_game_details(game_id):
+    url = f"https://store.steampowered.com/api/appdetails?appids={game_id}"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Проверка на HTTP ошибки
+        # print(f"Response content: {json.dumps(response.json(), indent=4)}")  # Для отладки
+        # with open("steam test dump.txt", "w") as dump:
+        #     dump.write(json.dumps(response.json(), indent=4))
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"HTTP Request failed: {e}")
+        return None
+    except ValueError as e:
+        print(f"JSON decode failed: {e}")
+        return None
