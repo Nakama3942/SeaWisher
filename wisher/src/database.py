@@ -27,14 +27,15 @@ class Games(Base):
 	# Стимовская информация
 	# Скачивается автоматически при добавлении игры
 	# ############################################################
-	title = Column(String, nullable=False)  # Название игры (Базовый)
-	game_link = Column(String, nullable=False)  # Ссылка на игру в Стиме (Базовый)
+	game_id = Column(String, nullable=False)  # ID игры
+	game_title = Column(String, nullable=False)  # Название игры (Базовый)
+	page_link = Column(String, nullable=False)  # Ссылка на игру в Стиме (Базовый)
 	image_link = Column(String, nullable=False)  # Ссылка на обложку игры (Базовый)
 	short_description = Column(String, nullable=False)  # Краткое описание
 	website = Column(String, nullable=False)  # Ссылка на сайт игры
 	developers = Column(String, nullable=False)  # Разработчики
 	publishers = Column(String, nullable=False)  # Издатели
-	coming_soon = Column(Boolean, nullable=False)  #
+	coming_soon = Column(String, nullable=False)  #
 	release_date = Column(String, nullable=False)  # Дата релиза игры (Базовый)
 	platforms = Column(String, nullable=False)  # Платформы, на которые вышла игра (Базовый)
 	steam_categories = Column(String, nullable=False)  # Стимовские категории

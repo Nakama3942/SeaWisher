@@ -16,12 +16,17 @@
 
 from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QPlainTextEdit, QLineEdit, QPushButton, QTableView, QSpacerItem, QLabel
 
-from wisher.src.steam_api import get_game_details
-from wisher.src.database import Database
+from wisher.ui.add_game_dialog import AddGameDialog
 
 class SeaWisher(QMainWindow):
 	def __init__(self):
 		super(SeaWisher, self).__init__()
+
+		###################
+		# Initialization
+		###################
+		# Initialization of dialog windows
+		self.add_game_dialog = AddGameDialog()
 
 		##############################
 		#
@@ -35,7 +40,7 @@ class SeaWisher(QMainWindow):
 		# self.main_layout.addWidget(self.game_data_test)
 
 		self.db_test_butt = QPushButton("Test DB", self)
-		self.db_test_butt.clicked.connect(self.main_layout_clicked)
+		self.db_test_butt.clicked.connect(self.db_test_butt_clicked)
 		self.main_layout.addWidget(self.db_test_butt)
 
 		##############################
@@ -48,122 +53,5 @@ class SeaWisher(QMainWindow):
 		self.setCentralWidget(self.central_widget)
 		self.setWindowTitle("SeaWisher")
 
-	def main_layout_clicked(self):
-		id = 648800  # ID игры Raft
-
-		game_details = get_game_details(id)
-
-		# if game_details and str(648800) in game_details and game_details[str(648800)]['success']:
-		if game_details[str(id)]['success']:
-			game_data = game_details[str(id)]['data']
-
-			# Имя игры
-			title = game_data['name']
-			# with Database() as db:
-			# 	if not db.check_post(title):
-			# 		return jsonify({'success': False, 'error_message': 'Пост із такою назвою вже існує'})
-
-			# Ссылка на страницу игры
-			game_link = f"https://store.steampowered.com/app/{id}/"
-
-			# Ссылка на заставку
-			image_link = game_data['header_image']
-
-			# Краткое описание
-			short_description = game_data['short_description']
-
-			# Ссылка на сайт игры
-			website = game_data['website']
-
-			# Разработчики
-			developers = f"{', '.join(game_data['developers'])}"
-
-			# Издатели
-			publishers = f"{', '.join(game_data['publishers'])}"
-
-			#
-			coming_soon = game_data['release_date']['coming_soon']
-
-			# Дата релиза
-			release_date = game_data['release_date']['date']
-
-			# Платформы
-			list_platforms = []
-			if game_data['platforms']['windows']:
-				list_platforms.append('Windows')
-			if game_data['platforms']['mac']:
-				list_platforms.append('MacOS')
-			if game_data['platforms']['linux']:
-				list_platforms.append('Linux')
-			platforms = f"{', '.join(list_platforms)}"
-
-			# Стимовские категории
-			steam_categories = f"{', '.join([category['description'] for category in game_data.get('categories', [])])}"
-
-			# Жанры
-			steam_tags = f"{', '.join([genre['description'] for genre in game_data.get('genres', [])])}"
-
-			# Стоимость игры
-			cost_info = game_data.get('price_overview', None)
-			if cost_info:
-				cost = cost_info['final_formatted']  # Цена в локальной валюте
-			else:
-				cost = "Игра недоступна для покупки"
-
-			# Симулирую ввод данных
-			category = "1"
-			steamDB_game_link = "1"
-			steam_reviews = "Mostly positive"
-			steamDB_rating_stats = "1"
-			positive_reviews_stats = "1"
-			negative_reviews_stats = "1"
-			discount = "1"
-			price = "1"
-			max_discount = "1"
-			min_price = "1"
-			stability = "Constant"
-			frequency = "Rare"
-			user_tags = "1"
-			added_date = "1"
-			comment = "1"
-
-			# Формуємо метаданні посту
-			game_metadata = {
-				'title': title,
-				'game_link': game_link,
-				'image_link': image_link,
-				"short_description": short_description,
-				"website": website,
-				"developers": developers,
-				"publishers": publishers,
-				"coming_soon": coming_soon,
-				'release_date': release_date,
-				'platforms': platforms,
-				"steam_categories": steam_categories,
-				'steam_tags': steam_tags,
-				'cost': cost,
-				'category': category,
-				'steamDB_game_link': steamDB_game_link,
-				"steam_reviews": steam_reviews,
-				'steamDB_rating_stats': steamDB_rating_stats,
-				'positive_reviews_stats': positive_reviews_stats,
-				'negative_reviews_stats': negative_reviews_stats,
-				'discount': discount,
-				'price': price,
-				'max_discount': max_discount,
-				'min_price': min_price,
-				'stability': stability,
-				'frequency': frequency,
-				'user_tags': user_tags,
-				'added_date': added_date,
-				'comment': comment
-			}
-
-			# Зберігаємо метадані в БД
-			with Database() as db:
-				db.add_game(game_metadata)
-
-			# return jsonify({'success': True})
-
-		else:
-			print(f"Не удалось получить данные для приложения с ID {648800}")
+	def db_test_butt_clicked(self):
+		self.add_game_dialog.show()
