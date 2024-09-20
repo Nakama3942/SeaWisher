@@ -87,6 +87,13 @@ class Games(Base):
 	impressions = Column(String)  # Субъективная оценка
 	impressions_comment = Column(String)  # Краткое объяснение субъективной оценки
 
+	# ############################################################
+	# Техническая информация
+	# Флаги для программы
+	# ############################################################
+	hidden = Column(Boolean, nullable=False)  # Указывает, удалена ли игра со списка желаемого
+	bought = Column(Boolean, nullable=False)  # Указывает, куплена ли игра
+
 	# todo: удалить
 	# description = Column(String, nullable=False)
 	# tags = Column(String, nullable=False)

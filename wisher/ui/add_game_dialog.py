@@ -273,16 +273,20 @@ class AddGameDialog(QDialog):
 		self.setMinimumSize(600, 480)
 
 	def game_data_download_butt_clicked(self):
-		# id = 648800  # ID игры Raft
 		game_id = self.game_id_text.toPlainText()
+
+		# todo: Сделать проверки
+		#  1) Если нет записи - продолжить работу (типа добавление записи)
+		#  2) Если есть запись и hidden == True - предложить восстановить запись (обернуть флаг)
+		#  3) Если есть запись и hidden == False - предложить обновить запись (открыть окно обновления)
+
 		# with Database() as db:
 		# 	if not db.check_post(title):
 		# 		return jsonify({'success': False, 'error_message': 'Пост із такою назвою вже існує'})
 
 		game_details = get_game_details(game_id)
 
-		# if game_details and str(648800) in game_details and game_details[str(648800)]['success']:
-		if game_details[str(game_id)]['success']:
+		if game_details:
 			game_data = game_details[str(game_id)]['data']
 
 			list_platforms = []
@@ -305,7 +309,7 @@ class AddGameDialog(QDialog):
 			self.platforms_text.setText(f"{', '.join(list_platforms)}")
 			self.steam_categories_text.setText(f"{', '.join([category['description'] for category in game_data.get('categories', [])])}")
 			self.steam_tags_text.setText(f"{', '.join([genre['description'] for genre in game_data.get('genres', [])])}")
-			self.cost_text.setText(game_data['price_overview']['final_formatted'])
+			self.cost_text.setText(game_data['price_overview']['final_formatted'] if not game_data['release_date']['coming_soon'] else "Игра недоступна для покупки")
 
 			self.steamDB_game_link_text.setText(f"https://steamdb.info/app/{game_id}/")
 		else:
@@ -342,11 +346,11 @@ class AddGameDialog(QDialog):
 			'frequency': self.frequency_text.toPlainText(),
 			'user_tags': self.user_tags_text.toPlainText(),
 			'added_date': self.added_date_text.toPlainText(),
-			'comment': self.comment_text.toPlainText()
+			'comment': self.comment_text.toPlainText(),
+			"hidden": False,
+			"bought": False
 		}
 
 		# Зберігаємо метадані в БД
 		with Database() as db:
 			db.add_game(game_metadata)
-
-		# return jsonify({'success': True})
